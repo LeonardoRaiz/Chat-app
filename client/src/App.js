@@ -4,12 +4,14 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import RoomChat from './pages/RoomChat';
 import SetAvatar from './pages/SetAvatar';
+import Chat from './pages/Chat';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route exact path='/' element={<RoomChat/>}/>
+        <Route exact path='/chat' element={<Chat/>}/>
         <Route exact path='/setAvatar' element={<SetAvatar/>}/>
         <Route  path='/register' element={<Register/>}/>
         <Route  path='/login' element={<Login/>}/>

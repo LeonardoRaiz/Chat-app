@@ -29,10 +29,6 @@ function Register() {
       }
       if (data.status === true) {
         toast.success(data.msg, toastOptions);
-        localStorage.setItem(
-          process.env.REACT_APP_LOCALHOST_KEY,
-          JSON.stringify(data)
-        );
       }
       //navigate("/")
     }

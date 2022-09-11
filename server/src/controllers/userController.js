@@ -21,7 +21,7 @@ module.exports.register = async (req, res, next) => {
       email,
       hashedPassword,
       false,
-      "asdas"
+      ""
     );
 
     return res.json({ msg: "Usuário cadastrado com sucesso", status: true });
@@ -46,15 +46,18 @@ module.exports.login = async (req, res, next) => {
     }
 
     const isAvatarValid = await User.findAvatar(req?.body);
-
+    console.log(isAvatarValid);
+    let imageSet = true
     if (!isAvatarValid) {
-      return res.json({ msg: "Não tem avatar", image: Logo });
+      imageSet = false;
     }
-
+    console.log(imageSet);
     return res.json({
+      isAvatarImageSet: imageSet,
       status: true,
       user: username,
       image: isAvatarValid,
+      
     });
   } catch (e) {
     next(e);
@@ -74,6 +77,18 @@ module.exports.setAvatar = async (req, res, next) => {
       return res.json({ isSet: false })
     }
     
+  } catch (e) {
+    next(e);
+  }
+};
+
+
+module.exports.getAllusers = async (req, res, next) => {
+  try {
+    console.log(req?.params.username);
+    const users = await User.allUser(req?.params.username)
+    console.log(users);
+    return res.json(users)
   } catch (e) {
     next(e);
   }

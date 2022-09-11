@@ -4,24 +4,45 @@ import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { allUsersRoute } from "../utils/API_Routes";
+import axios from "axios";
 
 function RoomChat() {
+  const [currentUser, setCurrentUser] = useState(undefined);
 
   useEffect(() => {
     if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/login");
+    } else {
+      setCurrentUser(
+        JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
+      );
     }
   }, []);
 
-
   //localStorage.clear()
   const navigate = useNavigate();
-  const user = JSON.parse(
-    localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-  ) || "teste";
-  const avatar = JSON.parse(
-    localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-  ) || {image: Logo.svg};
+  const user =
+    JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) ||
+    "teste";
+  const avatar = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+    ? JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
+    : "";
+  let avatarLogo = Logo
+  useEffect(() => {
+    if (currentUser) {
+      if (!currentUser.isAvatarImageSet) {
+        navigate("/setAvatar");
+      } 
+    }
+  }, [currentUser]);
+
+  if (currentUser) {
+    if (currentUser.isAvatarImageSet) {
+      avatarLogo = `data:image/svg+xml;base64,${avatar.image}`
+    }
+  }
+
   const [values, setValues] = useState({
     room: "Sala 1",
   });
@@ -37,13 +58,12 @@ function RoomChat() {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
 
-
   return (
     <>
       <FormContainer>
         <form onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
-            <img src={`data:image/svg+xml;base64,${avatar.image}`} alt="logo" />
+            <img src={avatarLogo} alt="logo" />
             <h1>{`Olá ${user.user} escolha sua sala`}</h1>
           </div>
           <select

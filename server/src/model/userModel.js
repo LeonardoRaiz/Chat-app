@@ -75,11 +75,24 @@ const findEmail = async (req, res) => {
     return avatar.avatarImage
   };
 
+  const allUser = async (req, res) => {
+    let query = `SELECT id, email, username,"avatarImage" FROM "users" WHERE username = '${req}' `;
+    let users  = "";
+    await client.query(query).then((res) => {
+      if (res.rows[0]) {
+        //console.log(res.rows[0]);
+        users = JSON.parse(JSON.stringify(res.rows));
+      }
+    });
+    return users
+  };
+
 module.exports = {
   insertUser,
   findUser,
   findEmail,
   findPassword,
   updateAvatar,
-  findAvatar
+  findAvatar,
+  allUser
 };
