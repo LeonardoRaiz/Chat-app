@@ -4,58 +4,19 @@ import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import { loginRoute } from "../utils/API_Routes";
 
-function Login() {
+function RoomChat() {
   const navigate = useNavigate();
   const [values, setValues] = useState({
-    username: "",
-    password: "",
+    room: "Sala 1",
   });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (handleValidation()) {
-      const { password, username } = values;
-      const { data } = await axios.post(loginRoute, {
-        username,
-        password,
-      });
-      if(data.status === false) {
-        toast.error(data.msg, toastOptions)
-      }
-      if(data.status === true) {
-        toast.success(data.msg, toastOptions)
-        navigate("/")
-      }
-      
-    }
+    console.log(values);
+    const { room } = values
+    navigate(`/chat?room=${room}`);
   };
-
-  //#region Validação com React Toast
-  //Regras do toast
-  const toastOptions = {
-    position: "top-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  };
-
-  //Validação do registro com toast
-  const handleValidation = () => {
-    const { password, username } = values;
-    if (password === "") {
-      toast.error("Usuário e senha são necessários", toastOptions);
-      return false;
-    } else if (username.length === "") {
-      toast.error("Usuário e senha são necessários", toastOptions);
-      return false;
-    } 
-    return true;
-  };
-  //#endregion
 
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
@@ -66,26 +27,19 @@ function Login() {
         <form onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>Register</h1>
+            <h1>Room Chat</h1>
           </div>
-          <input
-            type={"text"}
-            placeholder="Usuário"
-            name="username"
+          <select
+            type={"select"}
+            placeholder="Room"
+            name="room"
             onChange={(e) => handleChange(e)}
-            min="3"
-          />
-          <input
-            type={"password"}
-            placeholder="Senha"
-            name="password"
-            onChange={(e) => handleChange(e)}
-          />
-
-          <button type="submit">Login</button>
-          <span>
-            Você não tem uma conta? <Link to="/register"> Register </Link>
-          </span>
+          >
+            <option value="Sala 1">Sala 1</option>
+            <option value="Sala 2">Sala 2</option>
+            <option value="Sala 3">Sala 3</option>
+          </select>
+          <button type="submit">Join</button>
         </form>
       </FormContainer>
       <ToastContainer />
@@ -124,7 +78,7 @@ const FormContainer = styled.div`
     background-color: whitesmoke;
     border-radius: 2rem;
     padding: 3rem 5rem;
-    input {
+    select {
       background-color: transparent;
       padding: 1rem;
       border: 0.1rem solid #3e3e3e;
@@ -164,4 +118,4 @@ const FormContainer = styled.div`
   }
 `;
 
-export default Login;
+export default RoomChat;

@@ -40,8 +40,21 @@ const findEmail = async (req, res) => {
     return validation
   };
 
+  const findPassword = async (req, res) => {
+    let query = `SELECT password FROM "users" WHERE username = '${req?.username}' `;
+    let password  = "";
+    await client.query(query).then((res) => {
+      if (res.rows[0]) {
+        //console.log(res.rows[0]);
+        password = JSON.parse(JSON.stringify(res.rows[0]));
+      }
+    });
+    return password['password']
+  };
+
 module.exports = {
   insertUser,
   findUser,
   findEmail,
+  findPassword
 };
