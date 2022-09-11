@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import loader from "../assets/loader.png";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,6 +12,9 @@ import * as style from "@dicebear/adventurer";
 import randomColor from "randomcolor";
 
 export default function SetAvatar() {
+  const username = JSON.parse(
+    localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+  );
   //const api = "https://avatars.dicebear.com/api/adventurer";
   const navigate = useNavigate();
   const [avatars, setAvatars] = useState([]);
@@ -25,7 +28,36 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  const setProfilePicture = async () => {};
+  const setProfilePicture = async () => {
+    //localStorage.clear()
+    if (selectedAvatar === undefined) {
+      toast.error("Selecione seu avatar", toastOptions);
+    } else {
+      const user = await JSON.parse(
+        localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+      );
+      const { data } = await axios.post(`${setAvatarRoute}/${username.user}`, {
+        image: avatars[selectedAvatar],
+      });
+      if (data.isSet) {
+        user.isAvatarImageSet = true;
+        user.avatarImage = data.image;
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(user)
+        );
+        navigate("/");
+      } else {
+        toast.error("Erro escolha seu avatar novamente", toastOptions);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/login");
+    }
+  }, []);
 
   useEffect(() => {
     const data = [];
@@ -34,7 +66,7 @@ export default function SetAvatar() {
         seed: `${Math.round(Math.random() * 1000)}`,
         backgroundColor: randomColor(),
       });
-      
+
       const buffer = Buffer(image);
       data.push(buffer.toString("base64"));
       image = "";
@@ -52,7 +84,7 @@ export default function SetAvatar() {
       ) : (
         <Container>
           <div className="title-container">
-            <h1>Escolha seu avatar!</h1>
+            <h1>{`Olá ${username.user}! Escolha seu avatar!`}</h1>
           </div>
           <div className="containerAll">
             <div className="avatars">
@@ -74,7 +106,7 @@ export default function SetAvatar() {
               })}
             </div>
             <button onClick={setProfilePicture} className="submit-btn">
-              Escolheu? Deixe como seu avatar :)
+              Escolheu? Let's go para o chat :)
             </button>
           </div>
 

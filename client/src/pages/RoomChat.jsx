@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function RoomChat() {
+
+  useEffect(() => {
+    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/login");
+    }
+  }, []);
+
+
+  //localStorage.clear()
   const navigate = useNavigate();
+  const user = JSON.parse(
+    localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+  ) || "teste";
+  const avatar = JSON.parse(
+    localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+  ) || {image: Logo.svg};
   const [values, setValues] = useState({
     room: "Sala 1",
   });
@@ -14,20 +29,22 @@ function RoomChat() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(values);
-    const { room } = values
+    const { room } = values;
     navigate(`/chat?room=${room}`);
   };
 
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
+
+
   return (
     <>
       <FormContainer>
         <form onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
-            <img src={Logo} alt="logo" />
-            <h1>Room Chat</h1>
+            <img src={`data:image/svg+xml;base64,${avatar.image}`} alt="logo" />
+            <h1>{`Olá ${user.user} escolha sua sala`}</h1>
           </div>
           <select
             type={"select"}

@@ -52,9 +52,34 @@ const findEmail = async (req, res) => {
     return password['password']
   };
 
+  const updateAvatar = async (user, image) => {
+    let query = `UPDATE users SET "avatarImage" = '${image} ',"avatarSet" = true 
+    WHERE username = '${user}' `;
+    await client.query(query).then((res) => {
+      if (res.rows[0]) {
+        console.log(res.rows[0]);
+      }
+    });
+    return true
+  };
+
+  const findAvatar = async (req, res) => {
+    let query = `SELECT "avatarImage" FROM "users" WHERE username = '${req?.username}' `;
+    let avatar  = "";
+    await client.query(query).then((res) => {
+      if (res.rows[0]) {
+        //console.log(res.rows[0]);
+        avatar = JSON.parse(JSON.stringify(res.rows[0]));
+      }
+    });
+    return avatar.avatarImage
+  };
+
 module.exports = {
   insertUser,
   findUser,
   findEmail,
-  findPassword
+  findPassword,
+  updateAvatar,
+  findAvatar
 };

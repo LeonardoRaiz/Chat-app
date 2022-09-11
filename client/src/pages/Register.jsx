@@ -24,15 +24,25 @@ function Register() {
         email,
         password,
       });
-      if(data.status === false) {
-        toast.error(data.msg, toastOptions)
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
       }
-      if(data.status === true) {
-        toast.success(data.msg, toastOptions)
+      if (data.status === true) {
+        toast.success(data.msg, toastOptions);
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(data)
+        );
       }
       //navigate("/")
     }
   };
+
+  useEffect(() => {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/");
+    }
+  }, []);
 
   //#region Validação com React Toast
   //Regras do toast

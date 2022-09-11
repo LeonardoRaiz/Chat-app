@@ -25,8 +25,8 @@ module.exports.register = async (req, res, next) => {
     );
 
     return res.json({ msg: "Usuário cadastrado com sucesso", status: true });
-  } catch (e){
-    next(e)
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -37,17 +37,44 @@ module.exports.login = async (req, res, next) => {
       console.log("Usuário não cadastrado");
       return res.json({ msg: "Usuário não cadastrado", status: false });
     }
-    const { password } = req.body;
+    const { password, username } = req.body;
     let passwordCheck = await User.findPassword(req?.body);
-    console.log("testeee", passwordCheck);
-    const isPasswordValid = await bcrypt.compare(password, passwordCheck)
-    if(!isPasswordValid){
+    const isPasswordValid = await bcrypt.compare(password, passwordCheck);
+    if (!isPasswordValid) {
       console.log("Senha incorreta");
       return res.json({ msg: "Senha incorreta", status: false });
     }
 
-    return res.json({ msg: "Usuário cadastrado com sucesso", status: true });
-  } catch (e){
-    next(e)
+    const isAvatarValid = await User.findAvatar(req?.body);
+
+    if (!isAvatarValid) {
+      return res.json({ msg: "Não tem avatar", image: Logo });
+    }
+
+    return res.json({
+      status: true,
+      user: username,
+      image: isAvatarValid,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports.setAvatar = async (req, res, next) => {
+  try {
+    const user = req.params.username;
+    const avatarImage = req.body.image;
+    console.log(user);
+    const upAvatar = await User.updateAvatar(user, avatarImage);
+    if(upAvatar)
+    {
+      return res.json({ isSet: true, image: avatarImage })
+    } else {
+      return res.json({ isSet: false })
+    }
+    
+  } catch (e) {
+    next(e);
   }
 };

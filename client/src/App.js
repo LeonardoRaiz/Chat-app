@@ -10,7 +10,7 @@ function App() {
     <Router>
       <Routes>
         <Route exact path='/' element={<RoomChat/>}/>
-        <Route  path='/setAvatar' element={<SetAvatar/>}/>
+        <Route exact path='/setAvatar' element={<SetAvatar/>}/>
         <Route  path='/register' element={<Register/>}/>
         <Route  path='/login' element={<Login/>}/>
       </Routes>

@@ -22,16 +22,25 @@ function Login() {
         username,
         password,
       });
-      if(data.status === false) {
-        toast.error(data.msg, toastOptions)
+      console.log(data);
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
       }
-      if(data.status === true) {
-        toast.success(data.msg, toastOptions)
-        navigate("/")
+      if (data.status === true) {
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(data)
+        );
+        navigate(`/`);
       }
-      
     }
   };
+
+  useEffect(() => {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate('/');
+    }
+  }, []);
 
   //#region Validação com React Toast
   //Regras do toast
@@ -52,7 +61,7 @@ function Login() {
     } else if (username.length === "") {
       toast.error("Usuário e senha são necessários", toastOptions);
       return false;
-    } 
+    }
     return true;
   };
   //#endregion
