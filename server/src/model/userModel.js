@@ -29,6 +29,17 @@ const findUser = async (req, res) => {
   return validation
 };
 
+const findUserID = async (req, res) => {
+  let query = `SELECT id FROM "users" WHERE username = '${req?.username}' `;
+  let user = "";
+  await client.query(query).then((res) => {
+    if (res.rows[0]) {
+      user = JSON.parse(JSON.stringify(res.rows[0]));
+    }
+  });
+  return user.id
+};
+
 const findEmail = async (req, res) => {
     let query = `SELECT * FROM "users" WHERE email = '${req?.email}' `;
     let validation = false;
@@ -76,7 +87,7 @@ const findEmail = async (req, res) => {
   };
 
   const allUser = async (req, res) => {
-    let query = `SELECT id, email, username,"avatarImage" FROM "users" WHERE username = '${req}' `;
+    let query = `SELECT id, email, username,"avatarImage" FROM "users" `;
     let users  = "";
     await client.query(query).then((res) => {
       if (res.rows[0]) {
@@ -94,5 +105,6 @@ module.exports = {
   findPassword,
   updateAvatar,
   findAvatar,
-  allUser
+  allUser,
+  findUserID
 };

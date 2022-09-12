@@ -44,20 +44,21 @@ module.exports.login = async (req, res, next) => {
       console.log("Senha incorreta");
       return res.json({ msg: "Senha incorreta", status: false });
     }
-
+    
     const isAvatarValid = await User.findAvatar(req?.body);
-    console.log(isAvatarValid);
+
     let imageSet = true
     if (!isAvatarValid) {
       imageSet = false;
     }
-    console.log(imageSet);
+
+    const  id  = await User.findUserID(req?.body);
     return res.json({
       isAvatarImageSet: imageSet,
       status: true,
       user: username,
       image: isAvatarValid,
-      
+      id: id,
     });
   } catch (e) {
     next(e);
@@ -68,7 +69,6 @@ module.exports.setAvatar = async (req, res, next) => {
   try {
     const user = req.params.username;
     const avatarImage = req.body.image;
-    console.log(user);
     const upAvatar = await User.updateAvatar(user, avatarImage);
     if(upAvatar)
     {
@@ -85,9 +85,7 @@ module.exports.setAvatar = async (req, res, next) => {
 
 module.exports.getAllusers = async (req, res, next) => {
   try {
-    console.log(req?.params.username);
     const users = await User.allUser(req?.params.username)
-    console.log(users);
     return res.json(users)
   } catch (e) {
     next(e);
