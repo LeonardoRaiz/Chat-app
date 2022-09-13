@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { allUsersRoute } from "../utils/API_Routes";
+import { allUsersRoute, host } from "../utils/API_Routes";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
+import { io } from "socket.io-client";
 
 function Chat() {
   const navigate = useNavigate();
@@ -25,11 +26,18 @@ function Chat() {
             localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
           )
         );
-        setIsLoaded(true)
+        setIsLoaded(true);
       }
     }
     check();
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.emit("add-user", currentUser.id);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     async function check() {
@@ -61,7 +69,11 @@ function Chat() {
           {isLoaded && currentChat === undefined ? (
             <Welcome />
           ) : (
-            <ChatContainer currentChat={currentChat} />
+            <ChatContainer
+              currentChat={currentChat}
+              currentUser={currentUser}
+              socket={socket}
+            />
           )}
         </div>
       </Container>
